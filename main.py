@@ -1,43 +1,61 @@
 import pygame as pg
 import random
 from properties import *
-
-
+from sprites import *
 
 class Game:
-    def __init(self):
-        #initialize game window
+    def __init__(self):
+        # initialize game window
         pg.init()
         pg.mixer.init()
-        screen = pg.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
-        clock = pg.time.clock()
-        self.run = True
+        self.clock = pg.time.Clock()
+        self.running = True
 
     def new(self):
-        #new game
-        pass
+        # new game
+        self.all_sprites = pg.sprite.Group()
+        self.player = Player()
+        self.all_sprites.add(self.player)
+        self.run()
 
     def run(self):
-        #game loop
-        pass
+        # game loop
+        self.playing = True
+        while self.playing:
+            self.clock.tick(FPS)
+            self.events()
+            self.update()
+            self.draw()
 
     def update(self):
-        #game lopp update
+        # game lopp update
+        self.all_sprites.update()
         pass
 
     def events(self):
-        #game loop events
-        pass
+        # game loop events
+        # event loop
+        for event in pg.event.get():
+            # closing window if
+            if event.type == pg.QUIT:
+                if self.playing:
+                    self.playing = False
+                self.running = False
 
     def draw(self):
-        #game loop draw
-        pass
+        # game loop draw
+        self.screen.fill(BLACK)
+        self.all_sprites.draw(self.screen)
+        pg.display.flip()
+
     def show_start_screen(self):
-        #game start screen
+        # game start screen
         pass
+
     def show_go_screen(self):
-        #game over
+        # game over
         pass
 
 
@@ -47,22 +65,15 @@ while g.run:
     g.new()
     g.show_go_screen()
 
-pg.QUIT()
+pg.quit()
 
 
 
 
-all_sprites = pg.sprite.Group()
 
 
-run = True
-# GAme loop
-while run:
-    # speed of the loop
-    clock.tick(FPS)
-    #event lopp
-    for event in pygmae.event.get():
-        #closing window if
-        if event.type == pg.QUIT:
-            run = False
+
+
+
+
 
