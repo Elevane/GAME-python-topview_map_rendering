@@ -17,7 +17,14 @@ class Game:
         # new game
         self.all_sprites = pg.sprite.Group()
         self.player = Player()
+        self.platforms = pg.sprite.Group()
         self.all_sprites.add(self.player)
+        p1 = Platform(0, HEIGHT - 40, WIDTH, 40)
+        self.all_sprites.add(p1)
+        self.platforms.add(p1)
+        p2 = Platform(50, HEIGHT - 95, WIDTH/2, 20)
+        self.all_sprites.add(p2)
+        self.platforms.add(p2)
         self.run()
 
     def run(self):
@@ -32,6 +39,10 @@ class Game:
     def update(self):
         # game lopp update
         self.all_sprites.update()
+        hits = pg.sprite.spritecollide(self.player, self.platforms, False)
+        if hits:
+            self.player.pos.y = hits[0].rect.top
+            self.player.vel.y = 0
         pass
 
     def events(self):
@@ -65,7 +76,7 @@ while g.run:
     g.new()
     g.show_go_screen()
 
-pg.quit()
+pg.QUIT()
 
 
 
