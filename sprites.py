@@ -1,13 +1,16 @@
 # sprites classes for platform game
 import pygame as pg
 from properties import *
+from random import *
 
 vec = pg.math.Vector2
+#img = ['img/R12.png', 'img/R22.png', 'img/R32.png', 'img/R42.png', 'img/R52.png']
 
 class Player(pg.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, game):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((30,40))
+        self.game = game
+        self.image = pg.Surface((PLAYER_WIDTH,PLAYER_HEIGHT))
         self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, HEIGHT / 2)
@@ -15,8 +18,14 @@ class Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
 
+    def jump(self):
+        self.rect.x += 1
+        hits = pg.sprite.spritecollide(self,self.game.platforms, False)
+        self.rect.x -= 1
+        if hits:
+            self.vel.y = -20
     def update(self):
-        self.acc = vec(0, 0.05)
+        self.acc = vec(0, PLAYER_GRAVITY)
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
             self.acc.x = -PLAYER_ACC
@@ -36,8 +45,8 @@ class Player(pg.sprite.Sprite):
             self.pos.x = 0
         if self.pos.x < 0:
             self.pos.x = WIDTH
-
         self.rect.midbottom = self.pos
+
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, x, y, w, h):
