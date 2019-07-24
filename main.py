@@ -53,6 +53,7 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
+                
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.player.jump()
@@ -77,7 +78,8 @@ while g.run:
     g.new()
     g.show_go_screen()
 
-pg.QUIT()
+pg.quit()
+exit()
 
 
 
