@@ -1,7 +1,9 @@
 import pygame as pg
 import random
+import sys
 from properties import *
 from sprites import *
+from os import path
 
 class Game:
     def __init__(self):
@@ -11,6 +13,7 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
+        self.loadData()
         self.running = True
 
     def new(self):
@@ -34,6 +37,11 @@ class Game:
             self.update()
             self.draw()
 
+    def loadData(self):
+        self.dir = path.dirname(__file__)
+        imgDir = path.join(self.dir, 'img/Player')
+        self.spritesheet = Spritesheet(path.join(imgDir, SPRITESHEET))
+
     def update(self):
         # game loop update
         self.all_sprites.update()
@@ -44,6 +52,14 @@ class Game:
                 self.player.pos.y = hits[0].rect.top
                 self.player.vel.y = 0
 
+        if self.player.pos.x > WIDTH - (4 * PLAYER_WIDTH):
+            for plat in self.platforms:
+                plat.rect.x -= abs(self.player.vel.x)
+        if self.player.pos.x < (4 * PLAYER_WIDTH):
+            for plat in self.platforms:
+                plat.rect.x += abs(self.player.vel.x)
+
+
     def events(self):
         # game loop events
         # event loop
@@ -53,6 +69,7 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
+                sys.exit()
                 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:

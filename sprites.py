@@ -5,16 +5,24 @@ from random import *
 
 vec = pg.math.Vector2
 #img = ['img/R12.png', 'img/R22.png', 'img/R32.png', 'img/R42.png', 'img/R52.png']
+class Spritesheet:
+    def __init__(self, filename):
+        self.spritesheet = pg.image.load(filename).convert()
+
+    def getimage(self, x, y, width, height):
+        image = pg.Surface((width, height))
+        image.blit(self.spritesheet, (0,0), (x,y, width,height))
+        image = pg.transform.scale(image, (width//3, height//3))
+        return image
 
 class Player(pg.sprite.Sprite):
     def __init__(self, game):
         pg.sprite.Sprite.__init__(self)
         self.game = game
-        self.image = pg.Surface((PLAYER_WIDTH,PLAYER_HEIGHT))
-        self.image.fill(YELLOW)
+        self.image = self.game.spritesheet.getimage(192, 1024, 192, 256)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.pos = vec(WIDTH / 2, HEIGHT / 2)
+        self.pos = vec(WIDTH / 2, HEIGHT -40)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
 
@@ -31,8 +39,26 @@ class Player(pg.sprite.Sprite):
             self.acc.x = -PLAYER_ACC
         if keys[pg.K_RIGHT]:
             self.acc.x = PLAYER_ACC
+    def animate(self):
 
-        
+        now = pg.time.get_ticks()
+        if self.vel.x != 0:
+            self.walking = True
+        else:
+            self.walking = False
+        if self.walking:
+            if now - self.last_update > 200:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.walk_frames_l)
+                bottom = self.rect.bottom
+                if self.vel.x > 0:
+                    self.image = self.walk_frames_r[self.current_frame]
+                else:
+                    self.image = self.walk_frames_l[self.current_frame]
+                self.rect = self.image.get_rect()
+                self.rect.bottom = bottom
+        if not self.jump() and not self.walking:
+            self.last_update = now
 
         # apply friction
         self.acc.x += self.vel.x * PLAYER_FRICTION
@@ -40,11 +66,6 @@ class Player(pg.sprite.Sprite):
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
-        # wrap around teh sides of teh screen
-        if self.pos.x > WIDTH:
-            self.pos.x = 0
-        if self.pos.x < 0:
-            self.pos.x = WIDTH
         self.rect.midbottom = self.pos
 
 

@@ -4,7 +4,7 @@ TITLE = "Jumpy!"
 WIDTH = 480
 HEIGHT = 600
 FPS = 60
-
+SPRITESHEET = "character_robot_sheetHD.png"
 # PLAYER PROPERTIES
 PLAYER_ACC = 0.8 # more u put more acc u get
 PLAYER_FRICTION = -0.12 # less is more friction
@@ -14,11 +14,7 @@ PLAYER_HEIGHT = 40
 
 # PLATFORMS SETTINGS
 # platform list : x , y , width, height
-PLATFORM_LIST = [(0, HEIGHT - 40, WIDTH, 40),
-                 (WIDTH / 2 - 50, HEIGHT * 3 / 4, 100, 20),
-                 (125, HEIGHT - 350, 100, 20),
-                 (350, 200, 100, 20),
-                 (175, 100, 50, 20)]
+PLATFORM_LIST = [(0, HEIGHT - 40, WIDTH, 40)]
 
 # COLORS
 WHITE = (255,255,255)
