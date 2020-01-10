@@ -52,10 +52,10 @@ class Game:
                 self.player.pos.y = hits[0].rect.top
                 self.player.vel.y = 0
 
-        if self.player.pos.x > WIDTH - (4 * PLAYER_WIDTH):
+        if self.player.pos.x > WIDTH - (4 * PLAYER_WIDTH) and self.player.walking:
             for plat in self.platforms:
                 plat.rect.x -= abs(self.player.vel.x)
-        if self.player.pos.x < (4 * PLAYER_WIDTH):
+        if self.player.pos.x < (4 * PLAYER_WIDTH) and self.player.walking:
             for plat in self.platforms:
                 plat.rect.x += abs(self.player.vel.x)
 

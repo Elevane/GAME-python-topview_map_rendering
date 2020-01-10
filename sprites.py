@@ -19,12 +19,37 @@ class Player(pg.sprite.Sprite):
     def __init__(self, game):
         pg.sprite.Sprite.__init__(self)
         self.game = game
+        self.walking = False
+        self.jumping = False
+        self.current_frame = 0
+        self.last_update = 0
+        self.load_images()
         self.image = self.game.spritesheet.getimage(192, 1024, 192, 256)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, HEIGHT / 2)
         self.pos = vec(WIDTH / 2, HEIGHT -40)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
+
+    def load_images(self):
+        self.standing_frames = self.game.spritesheet.getimage(0, 0, 192, 256)
+        self.standing_frames.set_colorkey(BLACK)
+        self.walk_frames_r = [
+                              self.game.spritesheet.getimage(192, 1024, 192, 256),
+                              self.game.spritesheet.getimage(384, 1024, 192, 256),
+                              self.game.spritesheet.getimage(576, 1024, 192, 256),
+                              self.game.spritesheet.getimage(768, 1024, 192, 256),
+                              self.game.spritesheet.getimage(960, 1024, 192, 256),
+                              self.game.spritesheet.getimage(1152, 1024, 192, 256),
+                              self.game.spritesheet.getimage(1344, 1024, 192, 256)
+                              ]
+        self.walk_frames_l = []
+        self.jump_frame = self.game.spritesheet.getimage(192, 0, 192, 256)
+        self.jump_frame.set_colorkey(BLACK)
+        for frame in self.walk_frames_r:
+            frame.set_colorkey(BLACK)
+            self.walk_frames_l.append(pg.transform.flip(frame, True, False))
+
 
     def jump(self):
         self.rect.x += 1
@@ -33,19 +58,23 @@ class Player(pg.sprite.Sprite):
         if hits:
             self.vel.y = -20
     def update(self):
+        self.animate()
         self.acc = vec(0, PLAYER_GRAVITY)
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
             self.acc.x = -PLAYER_ACC
         if keys[pg.K_RIGHT]:
             self.acc.x = PLAYER_ACC
+
     def animate(self):
 
         now = pg.time.get_ticks()
-        if self.vel.x != 0:
+        if round(self.vel.x) != 0:
             self.walking = True
+            print(round(self.vel.x))
         else:
             self.walking = False
+
         if self.walking:
             if now - self.last_update > 200:
                 self.last_update = now
@@ -57,8 +86,12 @@ class Player(pg.sprite.Sprite):
                     self.image = self.walk_frames_l[self.current_frame]
                 self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
-        if not self.jump() and not self.walking:
+        if not self.jumping and not self.walking:
             self.last_update = now
+            bottom = self.rect.bottom
+            self.image = self.standing_frames
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
 
         # apply friction
         self.acc.x += self.vel.x * PLAYER_FRICTION

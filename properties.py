@@ -7,7 +7,7 @@ FPS = 60
 SPRITESHEET = "character_robot_sheetHD.png"
 # PLAYER PROPERTIES
 PLAYER_ACC = 0.8 # more u put more acc u get
-PLAYER_FRICTION = -0.12 # less is more friction
+PLAYER_FRICTION = -0.20 # less is more friction
 PLAYER_GRAVITY = 0.8 # less is  more Gravity
 PLAYER_WIDTH = 30
 PLAYER_HEIGHT = 40
