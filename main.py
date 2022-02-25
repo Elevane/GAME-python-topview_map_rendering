@@ -1,7 +1,7 @@
 
 import pygame , sys
 
-MAP = [0 for i in range(20)]
+MAP = [0 for i in range(20) ]
 
 class Game:
     def __init__(self):
