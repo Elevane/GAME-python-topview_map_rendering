@@ -2,14 +2,11 @@
 import random
 import pygame , sys
 
-randomaray = [1, 0, 0 ,0, 1, 0]
+from engine import create_map
 
 
-MAP= []
-for i in range(100):
-    MAP.append([randomaray[random.randint(0, len(randomaray)- 1)] for y in range(100)])
-with open("map.py", "w+") as o:
-    o.write(str(MAP))
+MAP = create_map()
+
 
 """
 MAP = [
@@ -41,29 +38,27 @@ class Map:
         self.map = MAP
         self.game = game
         self.walls = []
+        self.visible = []
+        self.stone = pygame.image.load("img\\stone_block.png").convert_alpha()
+        self.back_stone = pygame.image.load("img\\back_stone_block.png").convert_alpha()
+
     def draw(self):
-        
+        window = pygame.Rect(self.game.camera.x, self.game.camera.y, 864, 704)
+        self.game.surface = pygame.Surface((800, 640)).convert_alpha()
+        self.visible = []
         if self.map:
             for x, row in enumerate(self.map):
                 for y, col in enumerate(row):
-                    posx, posy = x*32 , y*32
-                    
-                    window = pygame.Rect(self.game.camera.x, self.game.camera.y, 800, 640)
-                    
+                    posx, posy = (x+self.game.camera.x) * 32 , (y+self.game.camera.y)*32                    
                     if pygame.Rect(posx, posy, 32, 32).colliderect(window):
-                        
                         if col == 1:
-                                img = pygame.image.load("img\stone_block.png").convert_alpha()
-                                self.walls.append([posx, posy])
+                            img = self.stone
                         if col == 0:
-                            img = pygame.image.load("img\\back_stone_block.png").convert_alpha()
-                        if col == 2: 
-                            img = pygame.image.load("img\grass_block.png").convert_alpha()
-                        self.game.surface.blit(img, (posx, posy))
+                            img = self.back_stone
+                        self.visible.append([img, [posx, posy]])
                   
-
-    
-                    
+        for tile in self.visible:
+            self.game.surface.blit(tile[0], (tile[1][0], tile[1][1]))      
 
 
 class Player:
@@ -95,16 +90,19 @@ class Camera:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def __str__(self) -> str:
+        return f"{self.x, self.y}"
             
 class Game:
     def __init__(self):
+        
         self.clock = pygame.time.Clock()
         self.camera = Camera(0, 0)
         self.screen = pygame.display.set_mode((800, 640))
         
         self.clock = pygame.time.Clock()
         self.map = Map(self)
-        ##self.player = Player(self)
         self.surface = pygame.Surface((800, 640)).convert_alpha()
 
     def run(self):
@@ -117,12 +115,9 @@ class Game:
             
 
     def draw(self):
-        # à toutes les frames dessine seulement la surface visible
-        # visible = 
         self.map.draw()
         self.screen.blit(self.surface, (0, 0))
         pygame.display.set_caption(str(self.clock.get_fps()))
-        ##self.player.draw()
 
     def update(self):
         
@@ -138,13 +133,13 @@ class Game:
                 pygame.quit
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
-            self.camera.x -= 10
-        elif key[pygame.K_RIGHT]:
-            self.camera.x += 10
-        elif key[pygame.K_UP]:
-            self.camera.y += 10
-        elif key[pygame.K_DOWN]:
-            self.camera.y -= 10
+            self.camera.x += 0.3
+        if key[pygame.K_RIGHT]:
+            self.camera.x -= 0.3
+        if key[pygame.K_UP]:
+            self.camera.y += 0.3
+        if key[pygame.K_DOWN]:
+            self.camera.y -= 0.3
 
 
 if __name__ == "__main__":
