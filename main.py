@@ -1,12 +1,13 @@
 
-import random
+from turtle import pos
 import pygame , sys
+from Utils import Throw
 
 from engine import create_map
 
 
 MAP = create_map()
-print(MAP)
+##print(MAP)
 class Map:
     def __init__(self, game):
         self.map = MAP
@@ -15,6 +16,7 @@ class Map:
         self.visible = []
         self.stone = pygame.image.load("img\\stone_block.png").convert_alpha()
         self.back_stone = pygame.image.load("img\\back_stone_block.png").convert_alpha()
+        self.grass = pygame.image.load("img\\grass_block.png").convert_alpha()
 
     def draw(self):
         window = pygame.Rect(self.game.camera.x, self.game.camera.y, 864, 704)
@@ -25,14 +27,16 @@ class Map:
                 for y, col in enumerate(row):
                     posx, posy = (x+self.game.camera.x) * 32 , (y+self.game.camera.y)*32                    
                     if pygame.Rect(posx, posy, 32, 32).colliderect(window):
-                        if col == 1:
-                            img = self.stone
-                        if col == 0:
+                        if col != 1 and col != 0 and col != 2:
+                            Throw(" ERROR WHILE DRAWING THE MAP INVALID COL VALUE")
+                        elif col == 1:
+                            img = self.grass
+                        elif col == 2:
                             img = self.back_stone
-                        self.visible.append([img, [posx, posy]])
+                        elif col == 0:
+                            img = self.grass
+                        self.game.surface.blit(img, (posx, posy)) 
                   
-        for tile in self.visible:
-            self.game.surface.blit(tile[0], (tile[1][0], tile[1][1]))      
 
 
 class Player:
